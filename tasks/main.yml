@@ -1,6 +1,7 @@
 ---
 # tasks file for nutanix_role_prism_cluster_update
-- include_tasks: setup_api.yml
+- name: Setup connection to Nutanix API
+  ansible.builtin.include_tasks: setup_api.yml
 
 - name: "Task can only be run against Prism Element"
   ansible.builtin.fail:
@@ -16,7 +17,7 @@
     body_format: json
     headers:
       Authorization: "{{ nutanix_api_auth }}"
-    return_content: yes
+    return_content: true
   register: nutanix_prism_cluster_current_config
 
 # - name: Debug nutanix_prism_cluster_current_config.json
@@ -346,7 +347,7 @@
       # version: "{{ nutanix_prism_cluster_current_config.json.version }}"
     headers:
       Authorization: "{{ nutanix_api_auth }}"
-    return_content: yes
+    return_content: true
   register: nutanix_prism_cluster_update_config
   when:
     - new_cluster_external_address is defined or

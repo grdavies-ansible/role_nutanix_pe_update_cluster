@@ -4,8 +4,8 @@ nutanix_host: ""
 nutanix_username: ""
 nutanix_password: ""
 nutanix_port: 9440
-validate_certs: no
-nutanix_debug: no
+validate_certs: false
+nutanix_debug: false
 # update_cluster_name: ""
 # update_cluster_virtual_ip: ""
 # update_data_services_ip: ""
