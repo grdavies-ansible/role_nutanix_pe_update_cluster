@@ -1,5 +1,5 @@
 galaxy_info:
-  role_name: role_nutanix_prism_dns
+  role_name: role_nutanix_pe_update_cluster
   namespace: grdavies
   author: Ross Davies
   description: Role to configure cluster-wide settings for Prism Element
