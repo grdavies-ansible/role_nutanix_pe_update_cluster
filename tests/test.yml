@@ -1,0 +1,15 @@
+---
+- hosts: localhost
+  gather_facts: false
+  roles:
+    - role: ../..
+  vars:
+    nutanix_host: 10.38.25.37
+    nutanix_username: admin
+    nutanix_password: nx2Tech126!
+    nutanix_debug: True
+    # update_cluster_name: PHX-POC186
+    # update_cluster_virtual_ip: 10.38.186.37
+    update_data_services_ip: 10.38.25.38
+    # update_enable_rf1_container: yes
+    # update_enable_shadow_clones: yes

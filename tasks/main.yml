@@ -1,0 +1,362 @@
+---
+# tasks file for nutanix_role_prism_cluster_update
+- include_tasks: setup_api.yml
+
+- name: "Task can only be run against Prism Element"
+  ansible.builtin.fail:
+    msg: "'nutanix_host' needs to be set to the VIP of a Nutanix cluster. Please check the variable and try again."
+  when:
+    - nutanix_endpoint_prism_type != 'pe'
+
+- name: Get Nutanix cluster details
+  uri:
+    url: "https://{{ nutanix_host }}:{{ nutanix_port }}/PrismGateway/services/rest/v2.0/cluster"
+    method: GET
+    validate_certs: "{{ validate_certs }}"
+    body_format: json
+    headers:
+      Authorization: "{{ nutanix_api_auth }}"
+    return_content: yes
+  register: nutanix_prism_cluster_current_config
+
+# - name: Debug nutanix_prism_cluster_current_config.json
+#   debug:
+#     var: nutanix_prism_cluster_current_config.json
+#   when:
+#     - nutanix_debug
+
+# Cluster VIP
+- name: Debug update_cluster_virtual_ip
+  debug:
+    var: update_cluster_virtual_ip
+  when:
+    - nutanix_debug
+
+- name: Debug nutanix_prism_cluster_current_config.json.cluster_external_address[0].ipv4
+  debug:
+    var: nutanix_prism_cluster_current_config.json.cluster_external_address[0].ipv4
+  when:
+    - nutanix_debug
+
+- name: Found cluster_external_address changed
+  set_fact:
+    cluster_external_address_changed:
+  when:
+    - update_cluster_virtual_ip is defined
+    - update_cluster_virtual_ip != nutanix_prism_cluster_current_config.json.cluster_external_address[0].ipv4 | default('')
+
+- name: Debug cluster_external_address_changed
+  debug:
+    var: cluster_external_address_changed
+  when:
+    - nutanix_debug
+
+- name: Set new_cluster_external_address
+  set_fact:
+    new_cluster_external_address:
+      - ipv4: "{{ update_cluster_virtual_ip }}"
+  when:
+    - nutanix_prism_cluster_current_config.json.cluster_external_address[0].ipv4
+    - cluster_external_address_changed is defined
+
+- name: Debug new_cluster_external_address
+  debug:
+    var: new_cluster_external_address
+  when:
+    - nutanix_debug
+
+# Cluster Data Services IP Address
+- name: Debug update_data_services_ip
+  debug:
+    var: update_data_services_ip
+  when:
+    - nutanix_debug
+
+- name: Debug nutanix_prism_cluster_current_config.json.cluster_external_data_services_address.ipv4
+  debug:
+    var: nutanix_prism_cluster_current_config.json.cluster_external_data_services_address.ipv4
+  when:
+    - nutanix_debug
+
+- name: Found cluster_external_data_services_address changed
+  set_fact:
+    cluster_external_data_services_address_changed:
+  when:
+    - update_data_services_ip is defined
+    - update_data_services_ip != nutanix_prism_cluster_current_config.json.cluster_external_data_services_address.ipv4 | default('')
+
+- name: Debug cluster_external_data_services_address_changed
+  debug:
+    var: cluster_external_data_services_address_changed
+  when:
+    - nutanix_debug
+
+- name: Set existing_cluster_external_data_services_address
+  set_fact:
+    existing_cluster_external_data_services_address:
+      ipv4: "{{ nutanix_prism_cluster_current_config.json.cluster_external_data_services_address.ipv4 }}"
+  when:
+    - nutanix_prism_cluster_current_config.json.cluster_external_data_services_address.ipv4 | default(False)
+
+- name: Debug existing_cluster_external_data_services_address
+  debug:
+    var: existing_cluster_external_data_services_address
+  when:
+    - nutanix_debug
+
+- name: Set new_cluster_external_data_services_address
+  set_fact:
+    new_cluster_external_data_services_address:
+      ipv4: "{{ update_data_services_ip }}"
+  when:
+    - update_data_services_ip
+    - cluster_external_data_services_address_changed is defined
+
+- name: Debug new_cluster_external_data_services_address
+  debug:
+    var: new_cluster_external_data_services_address
+  when:
+    - nutanix_debug
+
+# Cluster Name
+- name: Debug update_cluster_name
+  debug:
+    var: update_cluster_name
+  when:
+    - nutanix_debug
+
+- name: Debug nutanix_prism_cluster_current_config.json.name
+  debug:
+    var: nutanix_prism_cluster_current_config.json.name
+  when:
+    - nutanix_debug
+
+- name: Found cluster_name changed
+  set_fact:
+    cluster_name_changed:
+  when:
+    - update_cluster_name is defined
+    - update_cluster_name != nutanix_prism_cluster_current_config.json.name | default('')
+
+- name: Debug cluster_name_changed
+  debug:
+    var: cluster_name_changed
+  when:
+    - nutanix_debug
+
+- name: Set new cluster name fact
+  set_fact:
+    new_cluster_name: "{{ update_cluster_name | default(nutanix_prism_cluster_current_config.json.name) }}"
+  when:
+    - nutanix_prism_cluster_current_config.json.name
+
+- name: Debug new_cluster_name
+  debug:
+    var: new_cluster_name
+  when:
+    - nutanix_debug
+
+# Cluster RF1
+- name: Debug update_enable_rf1_container
+  debug:
+    var: update_enable_rf1_container
+  when:
+    - nutanix_debug
+
+- name: Debug nutanix_prism_cluster_current_config.json.enable_rf1_container
+  debug:
+    var: nutanix_prism_cluster_current_config.json.enable_rf1_container
+  when:
+    - nutanix_debug
+
+- name: Found cluster_enable_rf1_container_changed changed
+  set_fact:
+    cluster_enable_rf1_container_changed:
+  when:
+    - update_enable_rf1_container is defined
+    - update_enable_rf1_container != nutanix_prism_cluster_current_config.json.enable_rf1_container
+
+- name: Debug cluster_enable_rf1_container_changed
+  debug:
+    var: cluster_enable_rf1_container_changed
+  when:
+    - nutanix_debug
+
+- name: Set new RF1 fact
+  set_fact:
+    new_cluster_enable_rf1_container: "{{ update_enable_rf1_container | default(nutanix_prism_cluster_current_config.json.enable_rf1_container) }}"
+  when:
+    - cluster_enable_rf1_container_changed is defined
+    - nutanix_prism_cluster_current_config.json.enable_rf1_container is defined
+
+- name: Debug new_cluster_enable_rf1_container
+  debug:
+    var: new_cluster_enable_rf1_container
+  when:
+    - nutanix_debug
+
+# Cluster shadow Clones
+- name: Debug update_enable_shadow_clones
+  debug:
+    var: update_enable_shadow_clones
+  when:
+    - nutanix_debug
+
+- name: Debug nutanix_prism_cluster_current_config.json.enable_shadow_clones
+  debug:
+    var: nutanix_prism_cluster_current_config.json.enable_shadow_clones
+  when:
+    - nutanix_debug
+
+- name: Found cluster_enable_shodow_clones_changed changed
+  set_fact:
+    cluster_enable_shodow_clones_changed:
+  when:
+    - update_enable_shadow_clones is defined
+    - update_enable_shadow_clones != nutanix_prism_cluster_current_config.json.enable_shadow_clones
+
+- name: Debug cluster_enable_shodow_clones_changed
+  debug:
+    var: cluster_enable_shodow_clones_changed
+  when:
+    - nutanix_debug
+
+- name: Set new shadow clone fact
+  set_fact:
+    new_cluster_enable_shadow_clones: "{{ update_enable_shadow_clones }}"
+  when:
+    - cluster_enable_shodow_clones_changed is defined
+    - nutanix_prism_cluster_current_config.json.enable_shadow_clones is defined
+
+- name: Debug new_cluster_enable_shadow_clones
+  debug:
+    var: new_cluster_enable_shadow_clones
+  when:
+    - nutanix_debug
+
+- name: Update Nutanix cluster settings
+  uri:
+    url: "https://{{ nutanix_host }}:{{ nutanix_port }}/PrismGateway/services/rest/v2.0/cluster"
+    method: PUT
+    validate_certs: "{{ validate_certs }}"
+    body_format: json
+    body:
+      # all_hyperv_nodes_in_failover_cluster: "{{ nutanix_prism_cluster_current_config.json.all_hyperv_nodes_in_failover_cluster }}"
+      # block_serials: "{{ nutanix_prism_cluster_current_config.json.block_serials }}"
+      # cloudcluster: "{{ nutanix_prism_cluster_current_config.json.cloudcluster | default(omit) }}"
+      # cluster_arch: "{{ nutanix_prism_cluster_current_config.json.cluster_arch }}"
+      cluster_external_address: "{{ new_cluster_external_address | default(nutanix_prism_cluster_current_config.json.cluster_external_address) }}"
+      cluster_external_data_services_address: "{{ new_cluster_external_data_services_address | default(existing_cluster_external_data_services_address) | default(omit) }}"
+      # cluster_external_data_services_ipaddress: "{{ cluster_external_data_services_ipaddress | default(omit) }}"
+      # cluster_external_ipaddress: "{{ cluster_external_ipaddress | default(omit) }}"
+      # cluster_fully_qualified_domain_name: "{{ nutanix_prism_cluster_current_config.json.cluster_fully_qualified_domain_name | default(omit) }}"
+      # cluster_functions: "{{ nutanix_prism_cluster_current_config.json.cluster_functions }}"
+      # cluster_incarnation_id: "{{ nutanix_prism_cluster_current_config.json.cluster_incarnation_id }}"
+      # cluster_masquerading_address: "{{ nutanix_prism_cluster_current_config.json.cluster_masquerading_address }}"
+      # cluster_masquerading_ipaddress: "{{ nutanix_prism_cluster_current_config.json.cluster_masquerading_ipaddress }}"
+      # cluster_masquerading_port: "{{ nutanix_prism_cluster_current_config.json.cluster_masquerading_port }}"
+      # cluster_redundancy_state: "{{ nutanix_prism_cluster_current_config.json.cluster_redundancy_state | default(omit) }}"
+      # cluster_resiliency_preference: "{{ nutanix_prism_cluster_current_config.json.cluster_resiliency_preference | default(omit) }}"
+      # cluster_usage_critical_alert_threshold_pct: "{{ nutanix_prism_cluster_current_config.json.cluster_usage_critical_alert_threshold_pct }}"
+      # cluster_usage_warning_alert_threshold_pct: "{{ nutanix_prism_cluster_current_config.json.cluster_usage_warning_alert_threshold_pct }}"
+      # cluster_uuid: "{{ nutanix_prism_cluster_current_config.json.cluster_uuid }}"
+      # common_criteria_mode: "{{ nutanix_prism_cluster_current_config.json.common_criteria_mode | default(omit) }}"
+      # credential: "{{ nutanix_prism_cluster_current_config.json.credential }}"
+      # data_in_transit_encryption_dto: "{{ nutanix_prism_cluster_current_config.json.data_in_transit_encryption_dto | default(omit) }}"
+      # disable_degraded_node_monitoring: "{{ nutanix_prism_cluster_current_config.json.disable_degraded_node_monitoring }}"
+      # domain: "{{ nutanix_prism_cluster_current_config.json.domain | default(omit) }}"
+      # enable_lock_down: "{{ nutanix_prism_cluster_current_config.json.enable_lock_down | default(omit) }}"
+      # enable_on_disk_dedup: "{{ nutanix_prism_cluster_current_config.json.enable_on_disk_dedup }}"
+      # enable_password_remote_login_to_cluster: "{{ nutanix_prism_cluster_current_config.json.enable_password_remote_login_to_cluster }}"
+      # enable_rebuild_reservation: "{{ nutanix_prism_cluster_current_config.json.enable_rebuild_reservation }}"
+      enable_rf1_container: "{{ new_cluster_enable_rf1_container | default(nutanix_prism_cluster_current_config.json.enable_rf1_container) }}"
+      enable_shadow_clones: "{{ new_cluster_enable_shadow_clones | default(nutanix_prism_cluster_current_config.json.enable_shadow_clones) }}"
+      # encrypted: "{{ nutanix_prism_cluster_current_config.json.encrypted }}"
+      # enforce_rackable_unit_aware_placement: "{{ nutanix_prism_cluster_current_config.json.enforce_rackable_unit_aware_placement }}"
+      # external_address: "{{ nutanix_prism_cluster_current_config.json.external_address }}"
+      # external_subnet: "{{ nutanix_prism_cluster_current_config.json.external_subnet }}"
+      # fault_tolerance_domain_type: "{{ nutanix_prism_cluster_current_config.json.fault_tolerance_domain_type }}"
+      # fingerprint_content_cache_percentage: "{{ nutanix_prism_cluster_current_config.json.fingerprint_content_cache_percentage }}"
+      # full_version: "{{ nutanix_prism_cluster_current_config.json.full_version }}"
+      # global_nfs_white_list: "{{ nutanix_prism_cluster_current_config.json.global_nfs_white_list | default(omit) }}"
+      # global_nfs_white_list_address: "{{ nutanix_prism_cluster_current_config.json.global_nfs_white_list_address | default(omit) }}"
+      # has_self_encrypting_drive: "{{ nutanix_prism_cluster_current_config.json.has_self_encrypting_drive }}"
+      # http_proxies: "{{ nutanix_prism_cluster_current_config.json.http_proxies }}"
+      # hypervisor_lldp_config: "{{ nutanix_prism_cluster_current_config.json.hypervisor_lldp_config }}"
+      # hypervisor_security_compliance_config:
+      #   enable_aide: "{{ nutanix_prism_cluster_current_config.json.hypervisor_security_compliance_config.enable_aide }}"
+      #   enable_banner: "{{ nutanix_prism_cluster_current_config.json.hypervisor_security_compliance_config.enable_banner }}"
+      #   enable_core: "{{ nutanix_prism_cluster_current_config.json.hypervisor_security_compliance_config.enable_core }}"
+      #   enable_high_strength_password: "{{ nutanix_prism_cluster_current_config.json.hypervisor_security_compliance_config.enable_high_strength_password }}"
+      #   enable_itlbmultihit_mitigation: "{{ nutanix_prism_cluster_current_config.json.hypervisor_security_compliance_config.enable_itlbmultihit_mitigation }}"
+      #   enable_kernel_core: "{{ nutanix_prism_cluster_current_config.json.hypervisor_security_compliance_config.enable_kernel_core }}"
+      #   enable_kernel_mitigations: "{{ nutanix_prism_cluster_current_config.json.hypervisor_security_compliance_config.enable_kernel_mitigations }}"
+      #   enable_lock_status: "{{ nutanix_prism_cluster_current_config.json.hypervisor_security_compliance_config.enable_lock_status }}"
+      #   schedule: "{{ nutanix_prism_cluster_current_config.json.hypervisor_security_compliance_config.schedule }}"
+      #   ssh_security_level: "{{ nutanix_prism_cluster_current_config.json.hypervisor_security_compliance_config.ssh_security_level | default('DEFAULT') }}"
+      # hypervisor_types: "{{ nutanix_prism_cluster_current_config.json.hypervisor_types }}"
+      # id: "{{ nutanix_prism_cluster_current_config.json.id }}"
+      # internal_address: "{{ nutanix_prism_cluster_current_config.json.internal_address }}"
+      # internal_subnet: "{{ nutanix_prism_cluster_current_config.json.internal_subnet }}"
+      # is_lts: "{{ nutanix_prism_cluster_current_config.json.is_lts }}"
+      # is_nsenabled: "{{ nutanix_prism_cluster_current_config.json.is_nsenabled }}"
+      # is_registered_to_pc: "{{ nutanix_prism_cluster_current_config.json.is_registered_to_pc }}"
+      # is_upgrade_in_progress: "{{ nutanix_prism_cluster_current_config.json.is_upgrade_in_progress }}"
+      # iscsi_config: "{{ nutanix_prism_cluster_current_config.json.iscsi_config }}"
+      # management_servers: "{{ nutanix_prism_cluster_current_config.json.management_servers }}"
+      # multicluster: "{{ nutanix_prism_cluster_current_config.json.multicluster }}"
+      name: "{{ new_cluster_name | default(nutanix_prism_cluster_current_config.json.name) }}"
+      # name_servers: "{{ nutanix_prism_cluster_current_config.json.name_servers }}"
+      # name_servers_list: "{{ nutanix_prism_cluster_current_config.json.name_servers_list }}"
+      # ncc_version: "{{ nutanix_prism_cluster_current_config.json.ncc_version }}"
+      # nos_cluster_and_hosts_domain_joined: "{{ nutanix_prism_cluster_current_config.json.nos_cluster_and_hosts_domain_joined }}"
+      # ntp_servers: "{{ nutanix_prism_cluster_current_config.json.ntp_servers }}"
+      # ntp_servers_list: "{{ nutanix_prism_cluster_current_config.json.ntp_servers_list }}"
+      # num_nodes: "{{ nutanix_prism_cluster_current_config.json.num_nodes }}"
+      # operation_mode: "{{ nutanix_prism_cluster_current_config.json.operation_mode }}"
+      # public_keys: "{{ nutanix_prism_cluster_current_config.json.public_keys }}"
+      # rackable_units: "{{ nutanix_prism_cluster_current_config.json.rackable_units }}"
+      # recycle_bin_dto:
+      #   delete_intent_set: "{{ nutanix_prism_cluster_current_config.json.recycle_bin_dto.delete_intent_set }}"
+      #   recycle_bin_ttlsecs: "{{ nutanix_prism_cluster_current_config.json.recycle_bin_dto.recycle_bin_ttlsecs }}"
+      # security_compliance_config:
+      #   enable_aide: "{{ nutanix_prism_cluster_current_config.json.security_compliance_config.enable_aide }}"
+      #   enable_banner: "{{ nutanix_prism_cluster_current_config.json.security_compliance_config.enable_banner }}"
+      #   enable_core: "{{ nutanix_prism_cluster_current_config.json.security_compliance_config.enable_core }}"
+      #   enable_high_strength_password: "{{ nutanix_prism_cluster_current_config.json.security_compliance_config.enable_high_strength_password }}"
+      #   enable_kernel_core: "{{ nutanix_prism_cluster_current_config.json.security_compliance_config.enable_kernel_core }}"
+      #   enable_kernel_mitigations: "{{ nutanix_prism_cluster_current_config.json.security_compliance_config.enable_kernel_mitigations }}"
+      #   enable_lock_status: "{{ nutanix_prism_cluster_current_config.json.security_compliance_config.enable_lock_status }}"
+      #   enable_snmpv3_only: "{{ nutanix_prism_cluster_current_config.json.security_compliance_config.enable_snmpv3_only }}"
+      #   schedule: "{{ nutanix_prism_cluster_current_config.json.security_compliance_config.schedule }}"
+      #   ssh_security_level: "{{ nutanix_prism_cluster_current_config.json.security_compliance_config.ssh_security_level }}"
+      # segmented_iscsi_data_services_address: "{{ nutanix_prism_cluster_current_config.json.segmented_iscsi_data_services_address }}"
+      # segmented_iscsi_data_services_ipaddress: "{{ nutanix_prism_cluster_current_config.json.segmented_iscsi_data_services_ipaddress }}"
+      # service_centers: "{{ nutanix_prism_cluster_current_config.json.service_centers }}"
+      # smtp_server: "{{ nutanix_prism_cluster_current_config.json.smtp_server }}"
+      # ssd_pinning_percentage_limit: "{{ nutanix_prism_cluster_current_config.json.ssd_pinning_percentage_limit }}"
+      # stats: "{{ nutanix_prism_cluster_current_config.json.stats }}"
+      # storage_type: "{{ nutanix_prism_cluster_current_config.json.storage_type }}"
+      # support_verbosity_type: "{{ nutanix_prism_cluster_current_config.json.support_verbosity_type }}"
+      # target_version: "{{ nutanix_prism_cluster_current_config.json.target_version }}"
+      # threshold_for_storage_thin_provision: "{{ nutanix_prism_cluster_current_config.json.threshold_for_storage_thin_provision }}"
+      # timezone: "{{ nutanix_prism_cluster_current_config.json.timezone | default(omit) }}"
+      # usage_stats: "{{ nutanix_prism_cluster_current_config.json.usage_stats }}"
+      # uuid: "{{ nutanix_prism_cluster_current_config.json.uuid }}"
+      # version: "{{ nutanix_prism_cluster_current_config.json.version }}"
+    headers:
+      Authorization: "{{ nutanix_api_auth }}"
+    return_content: yes
+  register: nutanix_prism_cluster_update_config
+  when:
+    - new_cluster_external_address is defined or
+      new_cluster_external_data_services_address is defined or
+      new_cluster_name is defined or
+      new_cluster_enable_rf1_container is defined or
+      new_cluster_enable_shadow_clones is defined
+
+- name: Debug nutanix_prism_cluster_update_config
+  debug:
+    var: nutanix_prism_cluster_update_config.json
+  when:
+    - nutanix_debug
