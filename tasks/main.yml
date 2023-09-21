@@ -169,3 +169,12 @@
     nutanix_task_uuid: "{{ nutanix_prism_cluster_new_spec_put.json.status.execution_context.task_uuid }}"
     nutanix_task_retries: 30
     nutanix_task_retry_delay: 5
+  when:
+    - ( nutanix_prism_cluster_new_spec_update_cluster_name.changed or
+      nutanix_prism_cluster_new_spec_update_cluster_virtual_ip.changed or
+      nutanix_prism_cluster_new_spec_update_data_services_ip.changed or
+      nutanix_prism_cluster_new_spec_update_rf_level.changed )
+    - not nutanix_prism_cluster_new_spec_update_cluster_name.failed | default(false)
+    - not nutanix_prism_cluster_new_spec_update_cluster_virtual_ip.failed | default(false)
+    - not nutanix_prism_cluster_new_spec_update_data_services_ip.failed | default(false)
+    - not nutanix_prism_cluster_new_spec_update_rf_level.failed | default(false)
