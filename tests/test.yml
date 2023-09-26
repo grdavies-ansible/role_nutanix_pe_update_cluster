@@ -4,12 +4,13 @@
   roles:
     - role: ../..
   vars:
-    nutanix_host: 10.38.9.71
-    nutanix_username: admin
-    nutanix_password: nx2Tech231!
-    nutanix_debug: true
-    # update_cluster_name: PHX-SPOC009-2
-    # update_cluster_virtual_ip: 10.38.9.71
-    update_data_services_ip: 10.38.9.72
-    # update_rf_level: 1
+    role_nutanix_pe_update_cluster_host: 10.38.11.199
+    role_nutanix_pe_update_cluster_username: admin
+    role_nutanix_pe_update_cluster_password: nx2Tech682!
+    # role_nutanix_pe_update_cluster_debug: true
+    # role_nutanix_pe_update_cluster_name: PHX-SPOC011-4
+    role_nutanix_pe_update_cluster_name: PHX-SPOC011-4
+    # role_nutanix_pe_update_cluster_virtual_ip: 10.38.9.71
+    role_nutanix_pe_update_data_services_ip: 10.38.11.200
+    # role_nutanix_pe_update_rf_level: 1
     # update_enable_shadow_clones: yes

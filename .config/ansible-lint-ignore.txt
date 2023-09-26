@@ -1,2 +1,1 @@
 tasks/main.yml yaml[line-length]
-tasks/main.yml var-naming[no-role-prefix]

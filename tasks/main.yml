@@ -1,180 +1,194 @@
 ---
-# tasks file for nutanix_role_prism_cluster_update
+# tasks file for role_nutanix_pe_update_cluster
 - name: Setup connection to Nutanix API
-  ansible.builtin.include_tasks: setup_api.yml
+  ansible.builtin.include_role:
+    name: grdavies.role_nutanix_prism_api
+  vars:
+    role_nutanix_prism_api_host: "{{ role_nutanix_pe_update_cluster_host }}"
+    role_nutanix_prism_api_username: "{{ role_nutanix_pe_update_cluster_username }}"
+    role_nutanix_prism_api_password: "{{ role_nutanix_pe_update_cluster_password }}"
+    role_nutanix_prism_api_port: "{{ role_nutanix_pe_update_cluster_port }}"
+    role_nutanix_prism_api_validate_certs: "{{ role_nutanix_pe_update_cluster_validate_certs }}"
+    role_nutanix_prism_api_debug: "{{ role_nutanix_pe_update_cluster_debug }}"
 
 - name: "Task can only be run against Prism Element"
   ansible.builtin.fail:
-    msg: "'nutanix_host' needs to be set to the VIP of a Nutanix cluster. Please check the variable and try again."
+    msg: "'role_nutanix_pe_update_cluster_host' needs to be set to the VIP of a Nutanix cluster. Please check the variable and try again."
   when:
-    - nutanix_endpoint_prism_type != 'pe'
+    - role_nutanix_prism_api_endpoint_type != 'pe'
 
 - name: Get Nutanix v2 cluster info
   ansible.builtin.uri:
-    url: "https://{{ nutanix_host }}:{{ nutanix_port }}/PrismGateway/services/rest/v2.0/cluster"
+    url: "https://{{ role_nutanix_prism_api_url_base }}/PrismGateway/services/rest/v2.0/cluster"
     method: GET
-    validate_certs: "{{ validate_certs }}"
+    validate_certs: "{{ role_nutanix_pe_update_cluster_validate_certs }}"
     body_format: json
     headers:
-      Authorization: "{{ nutanix_api_auth }}"
+      Authorization: "{{ role_nutanix_prism_api_auth_string_b64 }}"
     return_content: true
-  register: nutanix_prism_cluster_current_config
+  register: role_nutanix_pe_update_existing_v2_config
 
-- name: Debug nutanix_prism_cluster_current_config.json
+- name: Debug role_nutanix_pe_update_existing_v2_config.json
   ansible.builtin.debug:
-    var: nutanix_prism_cluster_current_config.json
+    var: role_nutanix_pe_update_existing_v2_config.json
   when:
-    - nutanix_debug
+    - role_nutanix_pe_update_cluster_debug
 
 - name: Extract cluster UUID
   ansible.builtin.set_fact:
-    update_cluster_uuid: "{{ nutanix_prism_cluster_current_config.json.cluster_uuid }}"
+    role_nutanix_pe_update_existing_cluster_uuid: "{{ role_nutanix_pe_update_existing_v2_config.json.cluster_uuid }}"
 
-- name: Debug update_cluster_uuid
+- name: Debug role_nutanix_pe_update_existing_cluster_uuid
   ansible.builtin.debug:
-    var: update_cluster_uuid
+    var: role_nutanix_pe_update_existing_cluster_uuid
   when:
-    - nutanix_debug
+    - role_nutanix_pe_update_cluster_debug
 
 - name: Get Nutanix cluster spec
   ansible.builtin.uri:
-    url: "https://{{ nutanix_host }}:{{ nutanix_port }}/api/nutanix/v3/clusters/{{ update_cluster_uuid }}"
+    url: "https://{{ role_nutanix_prism_api_url_base }}/api/nutanix/v3/clusters/{{ role_nutanix_pe_update_existing_cluster_uuid }}"
     method: GET
-    validate_certs: "{{ validate_certs }}"
+    validate_certs: "{{ role_nutanix_pe_update_cluster_validate_certs }}"
     body_format: json
     headers:
-      Authorization: "{{ nutanix_api_auth }}"
+      Authorization: "{{ role_nutanix_prism_api_auth_string_b64 }}"
     return_content: true
-  register: nutanix_prism_cluster_current_spec
+  register: role_nutanix_pe_update_existing_v3_cluster_spec
 
-- name: Debug nutanix_prism_cluster_current_spec.json
+- name: Debug role_nutanix_pe_update_existing_v3_cluster_spec.json
   ansible.builtin.debug:
-    var: nutanix_prism_cluster_current_spec.json
+    var: role_nutanix_pe_update_existing_v3_cluster_spec.json
   when:
-    - nutanix_debug
+    - role_nutanix_pe_update_cluster_debug
 
 - name: Create Target Cluster Spec
   ansible.builtin.set_fact:
-    nutanix_prism_cluster_new_spec: "{{ nutanix_prism_cluster_current_spec.json.spec }}"
+    role_nutanix_pe_update_new_v3_cluster_spec: "{{ role_nutanix_pe_update_existing_v3_cluster_spec.json.spec }}"
 
 # cluster_name
-- name: Update Target Cluster Spec with update_cluster_name
+- name: Update Target Cluster Spec with role_nutanix_pe_update_cluster_name
   ansible.utils.update_fact:
     updates:
-      - path: nutanix_prism_cluster_new_spec.name
-        value: "{{ update_cluster_name }}"
-  register: nutanix_prism_cluster_new_spec_update_cluster_name
+      - path: role_nutanix_pe_update_new_v3_cluster_spec.name
+        value: "{{ role_nutanix_pe_update_cluster_name }}"
+  register: role_nutanix_pe_update_changed_v3_cluster_spec_cluster_name
   when:
-    - update_cluster_name is defined
+    - role_nutanix_pe_update_cluster_name is defined
 
-- name: Update nutanix_prism_cluster_new_spec with changes
+- name: Update role_nutanix_pe_update_new_v3_cluster_spec with changes
   ansible.builtin.set_fact:
-    nutanix_prism_cluster_new_spec: "{{ nutanix_prism_cluster_new_spec_update_cluster_name.nutanix_prism_cluster_new_spec }}"
+    role_nutanix_pe_update_new_v3_cluster_spec: "{{ role_nutanix_pe_update_changed_v3_cluster_spec_cluster_name.role_nutanix_pe_update_new_v3_cluster_spec }}"
   when:
-    - nutanix_prism_cluster_new_spec_update_cluster_name.changed
-    - not nutanix_prism_cluster_new_spec_update_cluster_name.failed
+    - role_nutanix_pe_update_changed_v3_cluster_spec_cluster_name.changed
+    - not role_nutanix_pe_update_changed_v3_cluster_spec_cluster_name.failed
 
-# update_cluster_virtual_ip
-- name: Update Target Cluster Spec with update_cluster_virtual_ip
+# role_nutanix_pe_update_cluster_virtual_ip
+- name: Update Target Cluster Spec with role_nutanix_pe_update_cluster_virtual_ip
   ansible.utils.update_fact:
     updates:
-      - path: nutanix_prism_cluster_new_spec.resources.network.external_ip
-        value: "{{ update_cluster_virtual_ip }}"
-  register: nutanix_prism_cluster_new_spec_update_cluster_virtual_ip
+      - path: role_nutanix_pe_update_new_v3_cluster_spec.resources.network.external_ip
+        value: "{{ role_nutanix_pe_update_cluster_virtual_ip }}"
+  register: role_nutanix_pe_update_changed_v3_cluster_spec_virtual_ip
   when:
-    - update_cluster_virtual_ip is defined
+    - role_nutanix_pe_update_cluster_virtual_ip is defined
 
-- name: Update nutanix_prism_cluster_new_spec with changes
+- name: Update role_nutanix_pe_update_new_v3_cluster_spec with changes
   ansible.builtin.set_fact:
-    nutanix_prism_cluster_new_spec: "{{ nutanix_prism_cluster_new_spec_update_cluster_virtual_ip.nutanix_prism_cluster_new_spec }}"
+    role_nutanix_pe_update_new_v3_cluster_spec: "{{ role_nutanix_pe_update_changed_v3_cluster_spec_virtual_ip.role_nutanix_pe_update_new_v3_cluster_spec }}"
   when:
-    - nutanix_prism_cluster_new_spec_update_cluster_virtual_ip.changed
-    - not nutanix_prism_cluster_new_spec_update_cluster_virtual_ip.failed
+    - role_nutanix_pe_update_changed_v3_cluster_spec_virtual_ip.changed
+    - not role_nutanix_pe_update_changed_v3_cluster_spec_virtual_ip.failed
 
 # data_services_ip
-- name: Update Target Cluster Spec with update_data_services_ip
+- name: Update Target Cluster Spec with role_nutanix_pe_update_data_services_ip
   ansible.utils.update_fact:
     updates:
-      - path: nutanix_prism_cluster_new_spec.resources.network.external_data_services_ip
-        value: "{{ update_data_services_ip }}"
-  register: nutanix_prism_cluster_new_spec_update_data_services_ip
+      - path: role_nutanix_pe_update_new_v3_cluster_spec.resources.network.external_data_services_ip
+        value: "{{ role_nutanix_pe_update_data_services_ip }}"
+  register: role_nutanix_pe_update_changed_v3_cluster_spec_data_services_ip
   when:
-    - update_data_services_ip is defined
+    - role_nutanix_pe_update_data_services_ip is defined
 
-- name: Update nutanix_prism_cluster_new_spec with changes
+- name: Update role_nutanix_pe_update_new_v3_cluster_spec with changes
   ansible.builtin.set_fact:
-    nutanix_prism_cluster_new_spec: "{{ nutanix_prism_cluster_new_spec_update_data_services_ip.nutanix_prism_cluster_new_spec }}"
+    role_nutanix_pe_update_new_v3_cluster_spec: "{{ role_nutanix_pe_update_changed_v3_cluster_spec_data_services_ip.role_nutanix_pe_update_new_v3_cluster_spec }}"
   when:
-    - nutanix_prism_cluster_new_spec_update_data_services_ip.changed
-    - not nutanix_prism_cluster_new_spec_update_data_services_ip.failed
+    - role_nutanix_pe_update_changed_v3_cluster_spec_data_services_ip.changed
+    - not role_nutanix_pe_update_changed_v3_cluster_spec_data_services_ip.failed
 
 # rf_level
-- name: Update Target Cluster Spec with update_rf_level
+- name: Update Target Cluster Spec with role_nutanix_pe_update_rf_level
   ansible.utils.update_fact:
     updates:
-      - path: nutanix_prism_cluster_new_spec.resources.config.redundancy_factor
-        value: "{{ update_rf_level }}"
-  register: nutanix_prism_cluster_new_spec_update_rf_level
+      - path: role_nutanix_pe_update_new_v3_cluster_spec.resources.config.redundancy_factor
+        value: "{{ role_nutanix_pe_update_rf_level }}"
+  register: role_nutanix_pe_update_changed_v3_cluster_spec_rf_level
   when:
-    - update_rf_level is defined
-    - update_rf_level in [1, 2, 3]
+    - role_nutanix_pe_update_rf_level is defined
+    - role_nutanix_pe_update_rf_level in [1, 2, 3]
 
-- name: Update nutanix_prism_cluster_new_spec with changes
+- name: Update role_nutanix_pe_update_new_v3_cluster_spec with changes
   ansible.builtin.set_fact:
-    nutanix_prism_cluster_new_spec: "{{ nutanix_prism_cluster_new_spec_update_rf_level.nutanix_prism_cluster_new_spec }}"
+    role_nutanix_pe_update_new_v3_cluster_spec: "{{ role_nutanix_pe_update_changed_v3_cluster_spec_rf_level.role_nutanix_pe_update_new_v3_cluster_spec }}"
   when:
-    - nutanix_prism_cluster_new_spec_update_rf_level.changed
-    - not nutanix_prism_cluster_new_spec_update_rf_level.failed
+    - role_nutanix_pe_update_changed_v3_cluster_spec_rf_level.changed
+    - not role_nutanix_pe_update_changed_v3_cluster_spec_rf_level.failed
 
-- name: Debug nutanix_prism_cluster_new_spec
+- name: Debug role_nutanix_pe_update_new_v3_cluster_spec
   ansible.builtin.debug:
-    var: nutanix_prism_cluster_new_spec
+    var: role_nutanix_pe_update_new_v3_cluster_spec
   when:
-    - nutanix_debug
+    - role_nutanix_pe_update_cluster_debug
 
 - name: Update Nutanix cluster settings
   ansible.builtin.uri:
-    url: "https://{{ nutanix_host }}:{{ nutanix_port }}/api/nutanix/v3/clusters/{{ update_cluster_uuid }}"
+    url: "https://{{ role_nutanix_prism_api_url_base }}/api/nutanix/v3/clusters/{{ role_nutanix_pe_update_existing_cluster_uuid }}"
     method: PUT
-    validate_certs: "{{ validate_certs }}"
+    validate_certs: "{{ role_nutanix_pe_update_cluster_validate_certs }}"
     body_format: json
     status_code: 202
     body:
-      metadata: "{{ nutanix_prism_cluster_current_spec.json.metadata }}"
-      spec: "{{ nutanix_prism_cluster_new_spec }}"
+      metadata: "{{ role_nutanix_pe_update_existing_v3_cluster_spec.json.metadata }}"
+      spec: "{{ role_nutanix_pe_update_new_v3_cluster_spec }}"
     headers:
-      Authorization: "{{ nutanix_api_auth }}"
+      Authorization: "{{ role_nutanix_prism_api_auth_string_b64 }}"
     return_content: true
   when:
-    - ( nutanix_prism_cluster_new_spec_update_cluster_name.changed or
-      nutanix_prism_cluster_new_spec_update_cluster_virtual_ip.changed or
-      nutanix_prism_cluster_new_spec_update_data_services_ip.changed or
-      nutanix_prism_cluster_new_spec_update_rf_level.changed )
-    - not nutanix_prism_cluster_new_spec_update_cluster_name.failed | default(false)
-    - not nutanix_prism_cluster_new_spec_update_cluster_virtual_ip.failed | default(false)
-    - not nutanix_prism_cluster_new_spec_update_data_services_ip.failed | default(false)
-    - not nutanix_prism_cluster_new_spec_update_rf_level.failed | default(false)
+    - ( role_nutanix_pe_update_changed_v3_cluster_spec_cluster_name.changed or
+      role_nutanix_pe_update_changed_v3_cluster_spec_virtual_ip.changed or
+      role_nutanix_pe_update_changed_v3_cluster_spec_data_services_ip.changed or
+      role_nutanix_pe_update_changed_v3_cluster_spec_rf_level.changed )
+    - not role_nutanix_pe_update_changed_v3_cluster_spec_cluster_name.failed | default(false)
+    - not role_nutanix_pe_update_changed_v3_cluster_spec_virtual_ip.failed | default(false)
+    - not role_nutanix_pe_update_changed_v3_cluster_spec_data_services_ip.failed | default(false)
+    - not role_nutanix_pe_update_changed_v3_cluster_spec_rf_level.failed | default(false)
   register: nutanix_prism_cluster_new_spec_put
 
 - name: Debug nutanix_prism_cluster_new_spec_put
   ansible.builtin.debug:
     var: nutanix_prism_cluster_new_spec_put
   when:
-    - nutanix_debug
+    - role_nutanix_pe_update_cluster_debug
 
 - name: Wait for cluster update task to complete
   ansible.builtin.import_role:
     name: grdavies.role_nutanix_prism_monitor_task
   vars:
-    nutanix_task_uuid: "{{ nutanix_prism_cluster_new_spec_put.json.status.execution_context.task_uuid }}"
-    nutanix_task_retries: 30
-    nutanix_task_retry_delay: 5
+    role_nutanix_prism_monitor_task_host: "{{ role_nutanix_pe_update_cluster_host }}"
+    role_nutanix_prism_monitor_task_username: "{{ role_nutanix_pe_update_cluster_username }}"
+    role_nutanix_prism_monitor_task_password: "{{ role_nutanix_pe_update_cluster_password }}"
+    role_nutanix_prism_monitor_task_port: "{{ role_nutanix_pe_update_cluster_port }}"
+    role_nutanix_prism_monitor_task_validate_certs: "{{ role_nutanix_pe_update_cluster_validate_certs }}"
+    role_nutanix_prism_monitor_task_debug: "{{ role_nutanix_pe_update_cluster_debug }}"
+    role_nutanix_prism_monitor_task_uuid: "{{ nutanix_prism_cluster_new_spec_put.json.status.execution_context.task_uuid }}"
+    role_nutanix_prism_monitor_task_retries: 30
+    role_nutanix_prism_monitor_task_retry_delay: 5
   when:
-    - ( nutanix_prism_cluster_new_spec_update_cluster_name.changed or
-      nutanix_prism_cluster_new_spec_update_cluster_virtual_ip.changed or
-      nutanix_prism_cluster_new_spec_update_data_services_ip.changed or
-      nutanix_prism_cluster_new_spec_update_rf_level.changed )
-    - not nutanix_prism_cluster_new_spec_update_cluster_name.failed | default(false)
-    - not nutanix_prism_cluster_new_spec_update_cluster_virtual_ip.failed | default(false)
-    - not nutanix_prism_cluster_new_spec_update_data_services_ip.failed | default(false)
-    - not nutanix_prism_cluster_new_spec_update_rf_level.failed | default(false)
+    - ( role_nutanix_pe_update_changed_v3_cluster_spec_cluster_name.changed or
+      role_nutanix_pe_update_changed_v3_cluster_spec_virtual_ip.changed or
+      role_nutanix_pe_update_changed_v3_cluster_spec_data_services_ip.changed or
+      role_nutanix_pe_update_changed_v3_cluster_spec_rf_level.changed )
+    - not role_nutanix_pe_update_changed_v3_cluster_spec_cluster_name.failed | default(false)
+    - not role_nutanix_pe_update_changed_v3_cluster_spec_virtual_ip.failed | default(false)
+    - not role_nutanix_pe_update_changed_v3_cluster_spec_data_services_ip.failed | default(false)
+    - not role_nutanix_pe_update_changed_v3_cluster_spec_rf_level.failed | default(false)

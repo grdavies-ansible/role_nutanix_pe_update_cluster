@@ -1,13 +1,13 @@
 ---
 # defaults file for nutanix_role_prism_cluster_update
-nutanix_host: ""
-nutanix_username: ""
-nutanix_password: ""
-nutanix_port: 9440
-validate_certs: false
-nutanix_debug: false
-# update_cluster_name: ""
-# update_cluster_virtual_ip: ""
-# update_data_services_ip: ""
+role_nutanix_pe_update_cluster_host: ""
+role_nutanix_pe_update_cluster_username: ""
+role_nutanix_pe_update_cluster_password: ""
+role_nutanix_pe_update_cluster_port: 9440
+role_nutanix_pe_update_cluster_validate_certs: false
+role_nutanix_pe_update_cluster_debug: false
+# role_nutanix_pe_update_cluster_name: ""
+# role_nutanix_pe_update_cluster_virtual_ip: ""
+# role_nutanix_pe_update_data_services_ip: ""
 # update_enable_rf1_container: ""
 # update_enable_shadow_clones: ""
