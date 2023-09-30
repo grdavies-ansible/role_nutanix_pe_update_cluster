@@ -10,7 +10,8 @@ This Ansible role get the list of available IP addresses from an AHV IPAM enable
 | role_nutanix_pe_update_cluster_host_username       | yes      |                 |                                                                                 | A valid username with appropriate rights to access the Nutanix API.                                                                                                                                                               |
 | role_nutanix_pe_update_cluster_host_password       | yes      |                 |                                                                                 | A valid password for the supplied username.                                                                                                                                                                                       |
 | role_nutanix_pe_update_cluster_host_port           | no       | 9440            |                                                                                 | The Prism TCP port.                                                                                                                                                                                                               |
-| role_nutanix_pe_update_cluster_host_validate_certs | no       | no              |                                                                                 | Whether to check if Prism UI certificates are valid.                                                                                                                                                                              |
+| role_nutanix_pe_update_cluster_host_validate_certs | no       | false           | true / false                                                                    | Whether to check if Prism UI certificates are valid.                                                                                                                                                                              |
+| role_nutanix_pe_update_cluster_debug               | no       | false           | true / false                                                                    | Enable debug logging.                                                                                                                                                                                                             |
 | role_nutanix_pe_update_cluster_name                | no       |                 |                                                                                 |                                                                                                                                                                                                                                   |
 | role_nutanix_pe_update_cluster_virtual_ip          | no       |                 |                                                                                 | Set to a valid IPv4 address in the same subnet as the CVMs                                                                                                                                                                        |
 | role_nutanix_pe_update_data_services_ip            | no       |                 |                                                                                 | Set to a valid IPv4 address in the same subnet as the CVMs/Cluster VIP                                                                                                                                                            |
@@ -27,7 +28,7 @@ None
 
 ## Example Playbook
 
-```
+```YAML
 - hosts: localhost
   gather_facts: false
   roles:
@@ -39,7 +40,7 @@ None
     role_nutanix_pe_update_cluster_name: NEW_CLUSTER_NAME
 ```
 
-```
+```YAML
 - hosts: localhost
   gather_facts: false
   roles:
@@ -50,7 +51,6 @@ None
     role_nutanix_pe_update_cluster_host_password: nx2Tech075!
     role_nutanix_pe_update_data_services_ip: 10.42.70.38
 ```
-
 
 ## License
 
