@@ -5,10 +5,10 @@
     name: grdavies.role_nutanix_prism_api
   vars:
     role_nutanix_prism_api_host: "{{ role_nutanix_pe_update_cluster_host }}"
-    role_nutanix_prism_api_username: "{{ role_nutanix_pe_update_cluster_username }}"
-    role_nutanix_prism_api_password: "{{ role_nutanix_pe_update_cluster_password }}"
-    role_nutanix_prism_api_port: "{{ role_nutanix_pe_update_cluster_port }}"
-    role_nutanix_prism_api_validate_certs: "{{ role_nutanix_pe_update_cluster_validate_certs }}"
+    role_nutanix_prism_api_host_username: "{{ role_nutanix_pe_update_cluster_host_username }}"
+    role_nutanix_prism_api_host_password: "{{ role_nutanix_pe_update_cluster_host_password }}"
+    role_nutanix_prism_api_host_port: "{{ role_nutanix_pe_update_cluster_host_port }}"
+    role_nutanix_prism_api_host_validate_certs: "{{ role_nutanix_pe_update_cluster_host_validate_certs }}"
     role_nutanix_prism_api_debug: "{{ role_nutanix_pe_update_cluster_debug }}"
 
 - name: "Task can only be run against Prism Element"
@@ -21,7 +21,7 @@
   ansible.builtin.uri:
     url: "https://{{ role_nutanix_prism_api_url_base }}/PrismGateway/services/rest/v2.0/cluster"
     method: GET
-    validate_certs: "{{ role_nutanix_pe_update_cluster_validate_certs }}"
+    validate_certs: "{{ role_nutanix_pe_update_cluster_host_validate_certs }}"
     body_format: json
     headers:
       Authorization: "{{ role_nutanix_prism_api_auth_string_b64 }}"
@@ -48,7 +48,7 @@
   ansible.builtin.uri:
     url: "https://{{ role_nutanix_prism_api_url_base }}/api/nutanix/v3/clusters/{{ role_nutanix_pe_update_existing_cluster_uuid }}"
     method: GET
-    validate_certs: "{{ role_nutanix_pe_update_cluster_validate_certs }}"
+    validate_certs: "{{ role_nutanix_pe_update_cluster_host_validate_certs }}"
     body_format: json
     headers:
       Authorization: "{{ role_nutanix_prism_api_auth_string_b64 }}"
@@ -144,7 +144,7 @@
   ansible.builtin.uri:
     url: "https://{{ role_nutanix_prism_api_url_base }}/api/nutanix/v3/clusters/{{ role_nutanix_pe_update_existing_cluster_uuid }}"
     method: PUT
-    validate_certs: "{{ role_nutanix_pe_update_cluster_validate_certs }}"
+    validate_certs: "{{ role_nutanix_pe_update_cluster_host_validate_certs }}"
     body_format: json
     status_code: 202
     body:
@@ -175,10 +175,10 @@
     name: grdavies.role_nutanix_prism_monitor_task
   vars:
     role_nutanix_prism_monitor_task_host: "{{ role_nutanix_pe_update_cluster_host }}"
-    role_nutanix_prism_monitor_task_username: "{{ role_nutanix_pe_update_cluster_username }}"
-    role_nutanix_prism_monitor_task_password: "{{ role_nutanix_pe_update_cluster_password }}"
-    role_nutanix_prism_monitor_task_port: "{{ role_nutanix_pe_update_cluster_port }}"
-    role_nutanix_prism_monitor_task_validate_certs: "{{ role_nutanix_pe_update_cluster_validate_certs }}"
+    role_nutanix_prism_monitor_task_host_username: "{{ role_nutanix_pe_update_cluster_host_username }}"
+    role_nutanix_prism_monitor_task_host_password: "{{ role_nutanix_pe_update_cluster_host_password }}"
+    role_nutanix_prism_monitor_task_host_port: "{{ role_nutanix_pe_update_cluster_host_port }}"
+    role_nutanix_prism_monitor_task_host_validate_certs: "{{ role_nutanix_pe_update_cluster_host_validate_certs }}"
     role_nutanix_prism_monitor_task_debug: "{{ role_nutanix_pe_update_cluster_debug }}"
     role_nutanix_prism_monitor_task_uuid: "{{ nutanix_prism_cluster_new_spec_put.json.status.execution_context.task_uuid }}"
     role_nutanix_prism_monitor_task_retries: 30

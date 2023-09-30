@@ -4,17 +4,17 @@ This Ansible role get the list of available IP addresses from an AHV IPAM enable
 
 ## Role Variables
 
-| Variable                                      | Required | Default         | Choices                                                                         | Comments                                                                                                                                                                                                                          |
-|-----------------------------------------------|----------|-----------------|---------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| role_nutanix_pe_update_cluster_host           | yes      |                 |                                                                                 | The IP address or FQDN for the Prism (Element only) to which you want to connect.                                                                                                                                                 |
-| role_nutanix_pe_update_cluster_username       | yes      |                 |                                                                                 | A valid username with appropriate rights to access the Nutanix API.                                                                                                                                                               |
-| role_nutanix_pe_update_cluster_password       | yes      |                 |                                                                                 | A valid password for the supplied username.                                                                                                                                                                                       |
-| role_nutanix_pe_update_cluster_port           | no       | 9440            |                                                                                 | The Prism TCP port.                                                                                                                                                                                                               |
-| role_nutanix_pe_update_cluster_validate_certs | no       | no              |                                                                                 | Whether to check if Prism UI certificates are valid.                                                                                                                                                                              |
-| role_nutanix_pe_update_cluster_name           | no       |                 |                                                                                 |                                                                                                                                                                                                                                   |
-| role_nutanix_pe_update_cluster_virtual_ip     | no       |                 |                                                                                 | Set to a valid IPv4 address in the same subnet as the CVMs                                                                                                                                                                        |
-| role_nutanix_pe_update_data_services_ip       | no       |                 |                                                                                 | Set to a valid IPv4 address in the same subnet as the CVMs/Cluster VIP                                                                                                                                                            |
-| role_nutanix_pe_update_rf_level               | no       |                 | [ 1, 2 3 ]                                                                      | Should be set to match the desired RF level; 1, 2 or 3                                                                                                                                                                            |
+| Variable                                           | Required | Default         | Choices                                                                         | Comments                                                                                                                                                                                                                          |
+|----------------------------------------------------|----------|-----------------|---------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| role_nutanix_pe_update_cluster_host                | yes      |                 |                                                                                 | The IP address or FQDN for the Prism (Element only) to which you want to connect.                                                                                                                                                 |
+| role_nutanix_pe_update_cluster_host_username       | yes      |                 |                                                                                 | A valid username with appropriate rights to access the Nutanix API.                                                                                                                                                               |
+| role_nutanix_pe_update_cluster_host_password       | yes      |                 |                                                                                 | A valid password for the supplied username.                                                                                                                                                                                       |
+| role_nutanix_pe_update_cluster_host_port           | no       | 9440            |                                                                                 | The Prism TCP port.                                                                                                                                                                                                               |
+| role_nutanix_pe_update_cluster_host_validate_certs | no       | no              |                                                                                 | Whether to check if Prism UI certificates are valid.                                                                                                                                                                              |
+| role_nutanix_pe_update_cluster_name                | no       |                 |                                                                                 |                                                                                                                                                                                                                                   |
+| role_nutanix_pe_update_cluster_virtual_ip          | no       |                 |                                                                                 | Set to a valid IPv4 address in the same subnet as the CVMs                                                                                                                                                                        |
+| role_nutanix_pe_update_data_services_ip            | no       |                 |                                                                                 | Set to a valid IPv4 address in the same subnet as the CVMs/Cluster VIP                                                                                                                                                            |
+| role_nutanix_pe_update_rf_level                    | no       |                 | [ 1, 2 3 ]                                                                      | Should be set to match the desired RF level; 1, 2 or 3                                                                                                                                                                            |
 
 ### Returned Variables
 
@@ -34,8 +34,8 @@ None
     - role: grdavies.role_nutanix_pe_update_cluster
   vars:
     role_nutanix_pe_update_cluster_host: "10.42.70.37"
-    role_nutanix_pe_update_cluster_username: admin
-    role_nutanix_pe_update_cluster_password: nx2Tech075!
+    role_nutanix_pe_update_cluster_host_username: admin
+    role_nutanix_pe_update_cluster_host_password: nx2Tech075!
     role_nutanix_pe_update_cluster_name: NEW_CLUSTER_NAME
 ```
 
@@ -46,8 +46,8 @@ None
     - role: grdavies.role_nutanix_pe_update_cluster
   vars:
     role_nutanix_pe_update_cluster_host: "10.42.70.37"
-    role_nutanix_pe_update_cluster_username: admin
-    role_nutanix_pe_update_cluster_password: nx2Tech075!
+    role_nutanix_pe_update_cluster_host_username: admin
+    role_nutanix_pe_update_cluster_host_password: nx2Tech075!
     role_nutanix_pe_update_data_services_ip: 10.42.70.38
 ```
 
