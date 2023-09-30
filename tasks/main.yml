@@ -100,14 +100,14 @@
     - not role_nutanix_pe_update_changed_v3_cluster_spec_virtual_ip.failed
 
 # data_services_ip
-- name: Update Target Cluster Spec with role_nutanix_pe_update_data_services_ip
+- name: Update Target Cluster Spec with role_nutanix_pe_update_cluster_data_services_ip
   ansible.utils.update_fact:
     updates:
       - path: role_nutanix_pe_update_new_v3_cluster_spec.resources.network.external_data_services_ip
-        value: "{{ role_nutanix_pe_update_data_services_ip }}"
+        value: "{{ role_nutanix_pe_update_cluster_data_services_ip }}"
   register: role_nutanix_pe_update_changed_v3_cluster_spec_data_services_ip
   when:
-    - role_nutanix_pe_update_data_services_ip is defined
+    - role_nutanix_pe_update_cluster_data_services_ip is defined
 
 - name: Update role_nutanix_pe_update_new_v3_cluster_spec with changes
   ansible.builtin.set_fact:
@@ -117,15 +117,15 @@
     - not role_nutanix_pe_update_changed_v3_cluster_spec_data_services_ip.failed
 
 # rf_level
-- name: Update Target Cluster Spec with role_nutanix_pe_update_rf_level
+- name: Update Target Cluster Spec with role_nutanix_pe_update_cluster_rf_level
   ansible.utils.update_fact:
     updates:
       - path: role_nutanix_pe_update_new_v3_cluster_spec.resources.config.redundancy_factor
-        value: "{{ role_nutanix_pe_update_rf_level }}"
+        value: "{{ role_nutanix_pe_update_cluster_rf_level }}"
   register: role_nutanix_pe_update_changed_v3_cluster_spec_rf_level
   when:
-    - role_nutanix_pe_update_rf_level is defined
-    - role_nutanix_pe_update_rf_level in [1, 2, 3]
+    - role_nutanix_pe_update_cluster_rf_level is defined
+    - role_nutanix_pe_update_cluster_rf_level in [1, 2, 3]
 
 - name: Update role_nutanix_pe_update_new_v3_cluster_spec with changes
   ansible.builtin.set_fact:

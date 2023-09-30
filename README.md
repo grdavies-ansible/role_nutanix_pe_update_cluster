@@ -14,8 +14,8 @@ This Ansible role get the list of available IP addresses from an AHV IPAM enable
 | role_nutanix_pe_update_cluster_debug               | no       | false           | true / false                                                                    | Enable debug logging.                                                                                                                                                                                                             |
 | role_nutanix_pe_update_cluster_name                | no       |                 |                                                                                 |                                                                                                                                                                                                                                   |
 | role_nutanix_pe_update_cluster_virtual_ip          | no       |                 |                                                                                 | Set to a valid IPv4 address in the same subnet as the CVMs                                                                                                                                                                        |
-| role_nutanix_pe_update_data_services_ip            | no       |                 |                                                                                 | Set to a valid IPv4 address in the same subnet as the CVMs/Cluster VIP                                                                                                                                                            |
-| role_nutanix_pe_update_rf_level                    | no       |                 | [ 1, 2 3 ]                                                                      | Should be set to match the desired RF level; 1, 2 or 3                                                                                                                                                                            |
+| role_nutanix_pe_update_cluster_data_services_ip    | no       |                 |                                                                                 | Set to a valid IPv4 address in the same subnet as the CVMs/Cluster VIP                                                                                                                                                            |
+| role_nutanix_pe_update_cluster_rf_level            | no       |                 | [ 1, 2 3 ]                                                                      | Should be set to match the desired RF level; 1, 2 or 3                                                                                                                                                                            |
 
 ### Returned Variables
 
@@ -49,7 +49,7 @@ None
     role_nutanix_pe_update_cluster_host: "10.42.70.37"
     role_nutanix_pe_update_cluster_host_username: admin
     role_nutanix_pe_update_cluster_host_password: nx2Tech075!
-    role_nutanix_pe_update_data_services_ip: 10.42.70.38
+    role_nutanix_pe_update_cluster_data_services_ip: 10.42.70.38
 ```
 
 ## License

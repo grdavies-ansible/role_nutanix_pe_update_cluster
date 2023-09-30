@@ -8,6 +8,6 @@ role_nutanix_pe_update_cluster_host_validate_certs: false
 role_nutanix_pe_update_cluster_debug: false
 # role_nutanix_pe_update_cluster_name: ""
 # role_nutanix_pe_update_cluster_virtual_ip: ""
-# role_nutanix_pe_update_data_services_ip: ""
+# role_nutanix_pe_update_cluster_data_services_ip: ""
 # update_enable_rf1_container: ""
 # update_enable_shadow_clones: ""
