@@ -200,13 +200,6 @@
     - role_nutanix_pe_update_cluster_rf_level is defined
     - role_nutanix_pe_update_cluster_rf_level in [1, 2, 3]
 
-- name: Debug role_nutanix_pe_update_new_v3_cluster_spec.resources.config.redundancy_factor
-  ansible.builtin.debug:
-    var: role_nutanix_pe_update_new_v3_cluster_spec.resources.config.redundancy_factor
-  when:
-    - role_nutanix_pe_update_cluster_debug
-    - role_nutanix_pe_update_cluster_rf_level in [1, 2, 3]
-
 - name: Update role_nutanix_pe_update_new_v3_cluster_spec with changes
   ansible.builtin.set_fact:
     role_nutanix_pe_update_new_v3_cluster_spec: "{{ role_nutanix_pe_update_changed_v3_cluster_spec_rf_level.role_nutanix_pe_update_new_v3_cluster_spec }}"
