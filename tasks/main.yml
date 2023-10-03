@@ -66,6 +66,13 @@
     role_nutanix_pe_update_new_v3_cluster_spec: "{{ role_nutanix_pe_update_existing_v3_cluster_spec.json.spec }}"
 
 # cluster_name
+- name: Debug role_nutanix_pe_update_cluster_name
+  ansible.builtin.debug:
+    var: role_nutanix_pe_update_cluster_name
+  when:
+    - role_nutanix_pe_update_cluster_debug
+    - role_nutanix_pe_update_cluster_name is defined
+
 - name: Update Target Cluster Spec with role_nutanix_pe_update_cluster_name
   ansible.utils.update_fact:
     updates:
@@ -75,6 +82,13 @@
   when:
     - role_nutanix_pe_update_cluster_name is defined
 
+- name: Debug role_nutanix_pe_update_changed_v3_cluster_spec_cluster_name
+  ansible.builtin.debug:
+    var: role_nutanix_pe_update_changed_v3_cluster_spec_cluster_name
+  when:
+    - role_nutanix_pe_update_cluster_debug
+    - role_nutanix_pe_update_changed_v3_cluster_spec_cluster_name is defined
+
 - name: Update role_nutanix_pe_update_new_v3_cluster_spec with changes
   ansible.builtin.set_fact:
     role_nutanix_pe_update_new_v3_cluster_spec: "{{ role_nutanix_pe_update_changed_v3_cluster_spec_cluster_name.role_nutanix_pe_update_new_v3_cluster_spec }}"
@@ -82,7 +96,22 @@
     - role_nutanix_pe_update_changed_v3_cluster_spec_cluster_name.changed
     - not role_nutanix_pe_update_changed_v3_cluster_spec_cluster_name.failed
 
+- name: Debug role_nutanix_pe_update_new_v3_cluster_spec
+  ansible.builtin.debug:
+    var: role_nutanix_pe_update_new_v3_cluster_spec
+  when:
+    - role_nutanix_pe_update_cluster_debug
+    - role_nutanix_pe_update_changed_v3_cluster_spec_cluster_name.changed
+    - not role_nutanix_pe_update_changed_v3_cluster_spec_cluster_name.failed
+
 # role_nutanix_pe_update_cluster_virtual_ip
+- name: Debug role_nutanix_pe_update_cluster_virtual_ip
+  ansible.builtin.debug:
+    var: role_nutanix_pe_update_cluster_virtual_ip
+  when:
+    - role_nutanix_pe_update_cluster_debug
+    - role_nutanix_pe_update_cluster_virtual_ip is defined
+
 - name: Update Target Cluster Spec with role_nutanix_pe_update_cluster_virtual_ip
   ansible.utils.update_fact:
     updates:
@@ -92,6 +121,13 @@
   when:
     - role_nutanix_pe_update_cluster_virtual_ip is defined
 
+- name: Debug role_nutanix_pe_update_changed_v3_cluster_spec_virtual_ip
+  ansible.builtin.debug:
+    var: role_nutanix_pe_update_changed_v3_cluster_spec_virtual_ip
+  when:
+    - role_nutanix_pe_update_cluster_debug
+    - role_nutanix_pe_update_changed_v3_cluster_spec_virtual_ip is defined
+
 - name: Update role_nutanix_pe_update_new_v3_cluster_spec with changes
   ansible.builtin.set_fact:
     role_nutanix_pe_update_new_v3_cluster_spec: "{{ role_nutanix_pe_update_changed_v3_cluster_spec_virtual_ip.role_nutanix_pe_update_new_v3_cluster_spec }}"
@@ -99,7 +135,22 @@
     - role_nutanix_pe_update_changed_v3_cluster_spec_virtual_ip.changed
     - not role_nutanix_pe_update_changed_v3_cluster_spec_virtual_ip.failed
 
+- name: Debug role_nutanix_pe_update_new_v3_cluster_spec
+  ansible.builtin.debug:
+    var: role_nutanix_pe_update_new_v3_cluster_spec
+  when:
+    - role_nutanix_pe_update_cluster_debug
+    - role_nutanix_pe_update_changed_v3_cluster_spec_virtual_ip.changed
+    - not role_nutanix_pe_update_changed_v3_cluster_spec_virtual_ip.failed
+
 # data_services_ip
+- name: Debug role_nutanix_pe_update_cluster_data_services_ip
+  ansible.builtin.debug:
+    var: role_nutanix_pe_update_cluster_data_services_ip
+  when:
+    - role_nutanix_pe_update_cluster_debug
+    - role_nutanix_pe_update_cluster_data_services_ip is defined
+
 - name: Update Target Cluster Spec with role_nutanix_pe_update_cluster_data_services_ip
   ansible.utils.update_fact:
     updates:
@@ -109,6 +160,13 @@
   when:
     - role_nutanix_pe_update_cluster_data_services_ip is defined
 
+- name: Debug role_nutanix_pe_update_changed_v3_cluster_spec_data_services_ip
+  ansible.builtin.debug:
+    var: role_nutanix_pe_update_changed_v3_cluster_spec_data_services_ip
+  when:
+    - role_nutanix_pe_update_cluster_debug
+    - role_nutanix_pe_update_changed_v3_cluster_spec_data_services_ip is defined
+
 - name: Update role_nutanix_pe_update_new_v3_cluster_spec with changes
   ansible.builtin.set_fact:
     role_nutanix_pe_update_new_v3_cluster_spec: "{{ role_nutanix_pe_update_changed_v3_cluster_spec_data_services_ip.role_nutanix_pe_update_new_v3_cluster_spec }}"
@@ -116,7 +174,22 @@
     - role_nutanix_pe_update_changed_v3_cluster_spec_data_services_ip.changed
     - not role_nutanix_pe_update_changed_v3_cluster_spec_data_services_ip.failed
 
+- name: Debug role_nutanix_pe_update_new_v3_cluster_spec
+  ansible.builtin.debug:
+    var: role_nutanix_pe_update_new_v3_cluster_spec
+  when:
+    - role_nutanix_pe_update_cluster_debug
+    - role_nutanix_pe_update_changed_v3_cluster_spec_data_services_ip.changed
+    - not role_nutanix_pe_update_changed_v3_cluster_spec_data_services_ip.failed
+
 # rf_level
+- name: Debug role_nutanix_pe_update_cluster_rf_level
+  ansible.builtin.debug:
+    var: role_nutanix_pe_update_cluster_rf_level
+  when:
+    - role_nutanix_pe_update_cluster_debug
+    - role_nutanix_pe_update_cluster_rf_level is defined
+
 - name: Update Target Cluster Spec with role_nutanix_pe_update_cluster_rf_level
   ansible.utils.update_fact:
     updates:
@@ -125,6 +198,13 @@
   register: role_nutanix_pe_update_changed_v3_cluster_spec_rf_level
   when:
     - role_nutanix_pe_update_cluster_rf_level is defined
+    - role_nutanix_pe_update_cluster_rf_level in [1, 2, 3]
+
+- name: Debug role_nutanix_pe_update_new_v3_cluster_spec.resources.config.redundancy_factor
+  ansible.builtin.debug:
+    var: role_nutanix_pe_update_new_v3_cluster_spec.resources.config.redundancy_factor
+  when:
+    - role_nutanix_pe_update_cluster_debug
     - role_nutanix_pe_update_cluster_rf_level in [1, 2, 3]
 
 - name: Update role_nutanix_pe_update_new_v3_cluster_spec with changes
@@ -139,6 +219,8 @@
     var: role_nutanix_pe_update_new_v3_cluster_spec
   when:
     - role_nutanix_pe_update_cluster_debug
+    - role_nutanix_pe_update_changed_v3_cluster_spec_rf_level.changed
+    - not role_nutanix_pe_update_changed_v3_cluster_spec_rf_level.failed
 
 - name: Update Nutanix cluster settings
   ansible.builtin.uri:
